@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDone</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes strikeThrough {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .header {
+            background: #2B6CB0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            color: white;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 80px auto 20px;
+            padding: 0 20px;
+        }
+
+        .input-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            margin-bottom: 30px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+        }
+
+        input[type="text"], input[type="date"] {
+            padding: 12px;
+            border: 1px solid #BEE3F8;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2B6CB0;
+            box-shadow: 0 4px 10px rgba(43, 108, 176, 0.15);
+        }
+
+        .add-btn {
+            background: #2B6CB0;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 10px rgba(43, 108, 176, 0.3);
+        }
+
+        .add-btn:hover {
+            background: #2C5282;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(43, 108, 176, 0.4);
+        }
+
+        .todo-list {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #EBF8FF;
+            animation: fadeIn 0.4s ease;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .todo-item.overdue {
+            border-left: 4px solid #F56565;
+        }
+
+        .todo-item:hover {
+            transform: translateX(10px);
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .checkbox-container {
+            margin-right: 15px;
+            position: relative;
+        }
+
+        .custom-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #2B6CB0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-checkbox.checked {
+            background: #2B6CB0;
+            border-color: #2B6CB0;
+        }
+
+        .custom-checkbox.checked::after {
+            content: "✓";
+            color: white;
+            font-size: 14px;
+            position: relative;
+            top: -1px;
+        }
+
+        .task-info {
+            flex-grow: 1;
+            margin-right: 20px;
+            position: relative;
+        }
+
+        .task-name {
+            font-weight: 500;
+            color: #2D3748;
+            margin-bottom: 5px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .task-name.completed {
+            color: #A0AEC0;
+        }
+
+        .task-name.completed::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #F56565;
+            animation: strikeThrough 0.3s ease-out;
+        }
+
+        .due-date {
+            font-size: 0.9em;
+            color: #718096;
+        }
+
+        .delete-btn {
+            background: #F56565;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 3px 8px rgba(245, 101, 101, 0.2);
+        }
+
+        .delete-btn:hover {
+            background: #C53030;
+            transform: scale(1.05);
+            box-shadow: 0 5px 12px rgba(245, 101, 101, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ToDone Task Manager</h1>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <form class="form-grid" id="todoForm">
+                <input type="text" id="taskName" placeholder="Enter task name..." required>
+                <input type="date" id="dueDate" required>
+                <button type="submit" class="add-btn">Add Task</button>
+            </form>
+        </div>
+
+        <div class="todo-list" id="todoList"></div>
+    </div>
+
+    <script>
+        const todoForm = document.getElementById('todoForm');
+        const todoList = document.getElementById('todoList');
+        const taskName = document.getElementById('taskName');
+        const dueDate = document.getElementById('dueDate');
+
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+        function saveTodos() {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        function isOverdue(dateString) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const dueDate = new Date(dateString);
+            return dueDate < today;
+        }
+
+        function formatDate(dateString) {
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function renderTodos() {
+            todoList.innerHTML = '';
+            todos.forEach((todo, index) => {
+                const todoItem = document.createElement('div');
+                todoItem.className = `todo-item ${isOverdue(todo.date) ? 'overdue' : ''}`;
+                
+                todoItem.innerHTML = `
+                    <div class="checkbox-container">
+                        <div class="custom-checkbox ${todo.completed ? 'checked' : ''}" 
+                             onclick="toggleComplete(${index})"></div>
+                    </div>
+                    <div class="task-info">
+                        <div class="task-name ${todo.completed ? 'completed' : ''}">${todo.name}</div>
+                        <div class="due-date">Due: ${formatDate(todo.date)}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteTodo(${index})">Delete</button>
+                `;
+                todoList.appendChild(todoItem);
+            });
+        }
+
+        function addTodo(e) {
+            e.preventDefault();
+            const newTodo = {
+                name: taskName.value,
+                date: dueDate.value,
+                completed: false
+            };
+
+            todos.push(newTodo);
+            saveTodos();
+            renderTodos();
+            taskName.value = '';
+            dueDate.value = '';
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            saveTodos();
+            renderTodos();
+        }
+
+        function toggleComplete(index) {
+            todos[index].completed = !todos[index].completed;
+            saveTodos();
+            renderTodos();
+        }
+
+        todoForm.addEventListener('submit', addTodo);
+        renderTodos();
+    </script>
+</body>
+</html>
